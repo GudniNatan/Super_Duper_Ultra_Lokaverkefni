@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from .forms import LoginForm, RegisterForm
 from datetime import date
+import os
 from . import validateKennitala
 
 from .models import Courses
@@ -10,6 +11,7 @@ from django.db import connections
 # Create your views here.
 def index(request):
     path = 'lokaverkefni/index.html'
+    #path = os.path.join(os.path.dirname(__file__), '/templates/' + 'lokaverkefni/index.html')
     yes = "nodata"
     loginformErrors, registerformErrors = None, None
 

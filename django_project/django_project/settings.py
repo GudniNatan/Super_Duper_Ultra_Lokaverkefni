@@ -71,9 +71,6 @@ TEMPLATES = [
         },
     },
 ]
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-)
 
 WSGI_APPLICATION = 'django_project.wsgi.application'
 
@@ -88,12 +85,20 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 #    }
 #}
 DATABASES = {
+    #'default': {
+    #    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #    'NAME': 'django',
+    #    'USER': 'django',
+    #    'PASSWORD': '1646a9e05e0de611508fc76a473d198f',
+    #    'HOST': 'localhost',
+    #    'PORT': '',
+    #},
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': '1646a9e05e0de611508fc76a473d198f',
-        'HOST': 'localhost',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ProgressTracker',
+        'USER': 'gudninatan',
+        'PASSWORD': 'mypassword',
+        'HOST': 'mysql.gng.is',
         'PORT': '',
     },
     'mysql': {
