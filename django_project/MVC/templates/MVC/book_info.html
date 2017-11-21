@@ -1,0 +1,23 @@
+{% extends "MVC/base.html" %}
+
+{% block title %}{{book.book_title}}{% endblock %}
+
+{% block header %}<h2>{{book.book_title}} upplýsingar</h2>{% endblock %}
+
+{% block content %}
+    <h2>Bókin {{book.book_title}} var skrifuð af {{book.book_author}} </h2>
+    <table>
+        <tr>
+            <th>Titill</th>
+            <th>Höfundur</th>
+            <th>Útgefandi</th>
+            <th>Ár</th>
+        </tr>
+        <tr>
+            <td>{{book.book_title}}</td>
+            <td>{{book.book_author}}</td>
+            <td>{{book.book_publisher}}</td>
+            <td>{{book.book_year}}</td>
+        </tr>
+    </table>
+{% endblock %}

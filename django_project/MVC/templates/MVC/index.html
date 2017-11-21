@@ -1,0 +1,17 @@
+{% extends "MVC/base.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block header %}<h2>MVC Verkefni</h2>{% endblock %}
+
+{% block content %}
+    {%if all_books%}
+    <ul>
+        {% for book in all_books %}
+        <li><a href="{% url 'MVC:detail' book.id %}">{{book.book_title}}</a></li>
+        {% endfor %}
+    </ul>
+    {%else%}
+    <p>Engar bækur skráðar.</p>
+    {%endif%}
+{% endblock %}

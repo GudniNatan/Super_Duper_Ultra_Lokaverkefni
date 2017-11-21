@@ -1,0 +1,66 @@
+upstream app_server {
+    server unix:/home/django/gunicorn.socket fail_timeout=0;
+}
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server ipv6only=on;
+
+    listen 443 ssl http2 default_server;
+    # listen [::]:443 ssl http2 default_server;
+
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+
+    client_max_body_size 4G;
+    server_name gng.is www.gng.is;
+
+    keepalive_timeout 5;
+
+    # Your Django project's media files - amend as required
+    location /media  {
+        alias /home/django/django_project/django_project/media;
+        # alias /home/django/django_project/routing/media;
+    }
+
+    # your Django project's static files - amend as required
+    location /static {
+	    alias /home/django/django_project/static;
+    }
+
+    # Proxy the static assests for the Django Admin panel
+    location /static/admin {
+       alias /usr/lib/python2.7/dist-packages/django/contrib/admin/static/admin/;
+    }
+
+    location / {
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Host $host;
+            proxy_redirect off;
+            proxy_buffering off;
+
+            proxy_pass http://app_server;
+    }
+
+    gzip            on;
+    gzip_min_length 1000;
+    gzip_proxied    expired no-cache no-store private auth;
+    gzip_types      text/plain application/xml;
+
+    ssl_certificate /etc/letsencrypt/live/gng.is/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gng.is/privkey.pem; # managed by Certbot
+
+    ssl_dhparam  /etc/nginx/ssl/dhparam.pem;
+
+
+    if ($scheme != "https") {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    # Redirect non-https traffic to https
+    # if ($scheme != "https") {
+    #     return 301 https://$host$request_uri;
+    # } # managed by Certbot
+
+}
