@@ -24,5 +24,5 @@ urlpatterns = [
     url(r'^(?i)admin/', include(admin.site.urls)),
     url(r'^(?i)MVC/', include(MVC_urls, namespace='MVC', app_name='MVC')), #This is how app urls should be
     url(r'^(?i)routing/', include(routing_urls)),
-    url(r'^(?i)lokaverkefni/', include(lokaverkefni_urls)),
+    url(r'^(?i)', include(lokaverkefni_urls)),
 ]

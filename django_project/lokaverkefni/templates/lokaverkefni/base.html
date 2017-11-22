@@ -24,38 +24,38 @@
                 <ul class="navbar-nav mr-auto justify-content-center container-fluid btn-group">
                     {% if request.path == "/lokaverkefni/" %}
                     <li class="nav-item active btn btn-secondary">
-                        <a class="nav-link " href="/lokaverkefni/">Heim<span class="sr-only">(current)</span></a>
+                        <a class="nav-link " href="/">Heim<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
                     <li class="nav-item btn btn-secondary">
-                        <a class="nav-link" href="/lokaverkefni/">Heim</a>
+                        <a class="nav-link" href="/">Heim</a>
                     </li>
                     {% endif %}
                     {% if request.path == "/lokaverkefni/chart/" %}
                     <li class="nav-item active btn btn-secondary">
-                        <a class="nav-link" href="/lokaverkefni/chart/">Áfangakort<span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/chart/">Áfangakort<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
                     <li class="nav-item btn btn-secondary">
-                        <a class="nav-link" href="/lokaverkefni/chart/">Áfangakort</a>
+                        <a class="nav-link" href="/chart/">Áfangakort</a>
                     </li>
                     {% endif %}
                     {% if request.path == "/lokaverkefni/nextSemester/" %}
                     <li class="nav-item active btn btn-secondary">
-                        <a class="nav-link" href="/lokaverkefni/nextSemester/">Listaval<span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/nextSemester/">Listaval<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
                     <li class="nav-item btn btn-secondary">
-                        <a class="nav-link" href="/lokaverkefni/nextSemester/">Listaval</a>
+                        <a class="nav-link" href="/nextSemester/">Listaval</a>
                     </li>
                     {% endif %}
                     {% if request.path == "/lokaverkefni/about/" %}
                     <li class="nav-item active btn btn-secondary">
-                        <a class="nav-link" href="/lokaverkefni/nextSemester/">Um síðu<span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/nextSemester/">Um síðu<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
                     <li class="nav-item btn btn-secondary">
-                        <a class="nav-link" href="/lokaverkefni/nextSemester/">Um síðu</a>
+                        <a class="nav-link" href="/nextSemester/">Um síðu</a>
                     </li>
                     {% endif %}
                 </ul>

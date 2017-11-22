@@ -5,7 +5,7 @@
 {% block content %}
     <main class="container-fluid">
         <div class="row">
-        <form method="post" action="#loginForm" id="loginForm" class="col-md">
+        <form method="post" action="#loginForm" id="loginForm" class="col-md border border-secondary rounded m-2 mb-0">
             {% csrf_token %}
             {% if loginError %}
             <div class="alert alert-warning" role="alert">
@@ -25,7 +25,7 @@
             <p class="text-muted"><i>*Fylla þarf út þessa reiti</i></p>
             <p><a href="#">Ég gleymdi lykilorðinu mínu.</a></p>
         </form>
-        <form method="post" action="#registerForm" id="registerForm" class="col-md">
+        <form method="post" action="#registerForm" id="registerForm" class="col-md border border-secondary rounded m-2 mb-0">
             {% csrf_token %}
             {% if registerError %}
             <div class="alert alert-warning" role="alert">
