@@ -107,6 +107,73 @@ values('ENSK2AE05AT','Enska',3),
       ('VEFÞ2VF05CU','Vefforritun I',3),
 	  ('VEFÞ2VÞ05DU','Vefforritun II',3),
 	  ('VEFÞ3VL05EU','Vefforritun III',3);
+      
+insert into TrackCourses(trackID, courseNumber, mandatory)
+values
+(9, 'ENSK2AE05AT', 1),
+(9, 'ENSK2OF05BT', 1),
+(9, 'ENSK3AM05CT', 1),
+(9, 'ÍSLE2AA05AT', 1),
+(9, 'ÍSLE2GO05BT', 1),
+(9, 'ÍSLE3BF05CT', 1),
+(9, 'ÍSLE3NB05CT', 1),
+(9, 'ÍSLE3LF05CT', 1),
+(9, 'DANS2BM05AT', 1),
+(9, 'STÆR2BR05AT', 1),
+(9, 'STÆR2AH05BT', 1),
+(9, 'STÆR3RV05CT', 1),
+(9, 'STÆR3FM05DT', 1),
+(9, 'STÆR3FV05ET', 1),
+(9, 'STÆR4HT05FT', 1),
+(9, 'STÆR2LT05BT', 1),
+(9, 'LÍFS1GR05AT', 1),
+(9, 'MENL1AL05AT', 1),
+(9, 'EÐLI2GR05BT', 1),
+(9, 'EÐLI2RB05CT', 1),
+(9, 'EÐLI3AK05DT', 0),
+(9, 'EFNA2AE05BT', 1),
+(9, 'EFNA3JA05CT', 0),
+(9, 'ÍÞRÓ1LA01AT', 1),
+(9, 'ÍÞRÓ1GH01AT', 1),
+(9, 'ÍÞRÓ1LB01BT', 1),
+(9, 'ÍÞRÓ1LC01CT', 0),
+(9, 'ÍÞRÓ1LD01DT', 0),
+(9, 'FORR1FG05AU', 1),
+(9, 'FORR2FA05BU', 1),
+(9, 'FORR2HF05CU', 1),
+(9, 'FORR3NÞ05DU', 0),
+(9, 'FORR2GL05DU', 0),
+(9, 'FORR3FL05EU', 0),
+(9, 'FORR3RR05DU', 0),
+(9, 'FORR3JS05DU', 0),
+(9, 'FORR3FV05EU', 0),
+(9, 'FORR3CG05DU', 0),
+(9, 'FORK2FE02AU', 0),
+(9, 'FORK2FT02BU', 0),
+(9, 'FORK2FÞ02CU', 0),
+(9, 'ROBO2RG05AU', 0),
+(9, 'ROBO3RF05BU', 0),
+(9, 'GAGN1NG05AU', 1),
+(9, 'GAGN2HS05BU', 1),
+(9, 'GAGN3GS05DU', 0),
+(9, 'KEST1TR05AU', 1),
+(9, 'KEST2VJ05BU', 1),
+(9, 'KEST2UN05CU', 1),
+(9, 'KEST2CG05DU', 0),
+(9, 'KEST3CR05EU', 0),
+(9, 'KEST3CS05FU', 0),
+(9, 'KEST3CN05GU', 0),
+(9, 'KEST2LG05DU', 0),
+(9, 'KEST3LN05EU', 0),
+(9, 'KEST3LS05FU', 0),
+(9, 'KEST2WG05DU', 0),
+(9, 'KEST3WN05EU', 0),
+(9, 'KEST3WS05FU', 0),
+(9, 'VEFÞ1VG05AU', 1),
+(9, 'VEFÞ2VH05BU', 1),
+(9, 'VEFÞ2VF05CU', 1),
+(9, 'VEFÞ2VÞ05DU', 0),
+(9, 'VEFÞ3VL05EU', 0);
 
 
 insert into Restrictors(courseNumber,restrictorID,restrictorType)values('FORR2FA05BU','FORR1FG05AU',1);
@@ -134,11 +201,11 @@ insert into Restrictors(courseNumber,restrictorID,restrictorType)values('KEST3CS
 insert into Restrictors(courseNumber,restrictorID,restrictorType)values('KEST3CN05GU','KEST3CS05FU',2);
 
 
-insert into Students(firstName,lastName,dob,email,userName,userPassword,studentTrack,registerDate)
+/*insert into Students(firstName,lastName,dob,email,userName,userPassword,studentTrack,registerDate)
 values('Katrín','Jónsdóttir','2000-09-29','katarina@emil.com','stína-stuð',aes_encrypt('Q&dnZP78RR','xAklwzVY3Q?Jk'),9,'2017-08-01'),
 	  ('Árni','Sigurbjörnsson','1998-11-07','arnisig@fakemail.ru','arnisig',aes_encrypt('9mk3#d24?xZ','xAklwzVY3Q?Jk'),9,'2015-08-01'),
       ('Guðrún','Jóhannsdóttir','1999-07-08','gudda_skrudda@nomail.is','gudrun',aes_encrypt('QwLL78$#sP','xAklwzVY3Q?Jk'),9,'2016-08-01'),
       ('Gunnar','Sigurðarson','1997-12-05','gusi@fakemail.eu','gunnsi',aes_encrypt('G!m89F&&vC','xAklwzVY3Q?Jk'),9,'2014-01-01'),
       ('Jón','Jónsson','2000-03-31','jojo@nomailatall.de','nonniboy',aes_encrypt('Ax49%x25B','xAklwzVY3Q?Jk'),9,'2017-08-01');
       
-      
+*/

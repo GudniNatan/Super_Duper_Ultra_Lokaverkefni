@@ -3,10 +3,12 @@ from django.shortcuts import get_object_or_404
 from .forms import LoginForm, RegisterForm
 from datetime import date
 from passwordValidation import boil, verify, updatePass
-from .models import Courses
+from .models import Courses, Tracks
 from django.db import connections
 from django.db import IntegrityError
+from django.utils.encoding import smart_unicode
 
+# coding: utf-8
 # Create your views here.
 def index(request):
     path = 'lokaverkefni/index.html'
@@ -14,6 +16,10 @@ def index(request):
     yes = request.session.get("kt") or ""
     loginformErrors, registerformErrors = None, None
 
+    tracks = list()
+    for obj in Tracks.objects.all():
+        tracks.append([smart_unicode(obj.trackid), smart_unicode(obj.trackname)])
+    tracks.reverse()
 
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -22,7 +28,8 @@ def index(request):
             # check whether it's valid:
             if loginform.is_valid():
                 #render different page if login is good
-                yes += str(login(request, loginform.cleaned_data['login_username'], loginform.cleaned_data['login_password']))
+                data = loginform.cleaned_data
+                yes += str(login(request, data['login_username'], data['login_password']))
 
             else:
                 loginformErrors = loginform.errors.as_data()
@@ -31,7 +38,8 @@ def index(request):
             registerform = RegisterForm(request.POST)
             if registerform.is_valid():
                 #render different page if register is good
-                yes += str(register(request, registerform.cleaned_data['register_username'], registerform.cleaned_data['register_password']))
+                data = registerform.cleaned_data
+                yes += str(register(request, data['register_username'], data['register_password'], data['track_id']))
 
             else:
                 registerformErrors = registerform.errors.as_data()
@@ -42,6 +50,7 @@ def index(request):
         'current_path': request.get_full_path(),
         'loginError': loginformErrors,
         'registerError': registerformErrors,
+        'tracks': tracks
     }
     return render(request, path, context)
 

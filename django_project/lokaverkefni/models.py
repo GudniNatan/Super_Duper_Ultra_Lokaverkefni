@@ -10,34 +10,37 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils.encoding import smart_unicode
+from  django.utils.encoding import python_2_unicode_compatible
 
-
+@python_2_unicode_compatible
 class Courses(models.Model):
     coursenumber = models.CharField(db_column='courseNumber', primary_key=True, max_length=11)  # Field name made lowercase.
     coursename = models.CharField(db_column='courseName', max_length=75)  # Field name made lowercase.
     coursecredits = models.IntegerField(db_column='courseCredits')  # Field name made lowercase.
-
+    mincredits = models.IntegerField(db_column='minCredits')  # Field name made lowercase.
     def __str__(self):
-        return (self.coursenumber + " " + self.coursename).encode('ascii','replace')
+        return smart_unicode(self.coursenumber) + u" " + smart_unicode(self.coursename)
 
     class Meta:
         managed = False
         db_table = 'Courses'
 
-
+@python_2_unicode_compatible
 class Divisions(models.Model):
     divisionid = models.AutoField(db_column='divisionID', primary_key=True)  # Field name made lowercase.
     divisionname = models.CharField(db_column='divisionName', max_length=75)  # Field name made lowercase.
     schoolid = models.ForeignKey('Schools', db_column='schoolID')  # Field name made lowercase.
 
     def __str__(self):
-        return (str(self.divisionid) + " " + self.divisionname).encode('ascii','replace')
+        # return smart_unicode(self.divisionid) + u" " + smart_unicode(self.divisionname)
+        return smart_unicode("%s %s" % (self.divisionid, self.divisionname))
 
     class Meta:
         managed = False
         db_table = 'Divisions'
 
-
+@python_2_unicode_compatible
 class Restrictors(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     restrictorid = models.CharField(db_column='restrictorID', max_length=11)  # Field name made lowercase.
@@ -45,29 +48,28 @@ class Restrictors(models.Model):
     restrictortype = models.CharField(db_column='restrictorType', max_length=1, blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
-        return u"%s %s" % (self.restrictorid, self.coursenumber)
-
-    def __unicode__(self):
-        return u"%s %s" % (self.restrictorid, self.coursenumber)
+        return smart_unicode("%s - %s" % (self.restrictorid, self.coursenumber))
 
     class Meta:
         managed = False
         db_table = 'Restrictors'
         unique_together = (('coursenumber', 'restrictorid'),)
 
-
+@python_2_unicode_compatible
 class Schools(models.Model):
     schoolid = models.AutoField(db_column='schoolID', primary_key=True)  # Field name made lowercase.
     schoolname = models.CharField(db_column='schoolName', max_length=75, blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
-        return (str(self.schoolid) + " " + str(self.schoolname)).encode('ascii','replace')
+        return smart_unicode("%s %s" % (self.schoolid, self.schoolname))
+
 
     class Meta:
         managed = False
         db_table = 'Schools'
 
 
+@python_2_unicode_compatible
 class Semesters(models.Model):
     semesterid = models.AutoField(db_column='semesterID', primary_key=True)  # Field name made lowercase.
     semestername = models.CharField(db_column='semesterName', max_length=10)  # Field name made lowercase.
@@ -75,13 +77,15 @@ class Semesters(models.Model):
     semesterends = models.DateField(db_column='semesterEnds')  # Field name made lowercase.
 
     def __str__(self):
-        return (str(self.semesterid) + " " + str(self.semestername)).encode('ascii','replace')
+        return smart_unicode("%s %s" % (self.semesterid, self.semestername))
+
 
     class Meta:
         managed = False
         db_table = 'Semesters'
 
 
+@python_2_unicode_compatible
 class Studentcourses(models.Model):
     studentcourseid = models.AutoField(db_column='studentCourseID', primary_key=True)  # Field name made lowercase.
     grade = models.IntegerField(blank=True, null=True)
@@ -90,35 +94,30 @@ class Studentcourses(models.Model):
     coursenumber = models.ForeignKey('Trackcourses', db_column='courseNumber')  # Field name made lowercase.
 
     def __str__(self):
-        return (str(self.studentcourseid) + " " + str(self.grade)).encode('ascii','replace')
+        return smart_unicode("%s %s" % (self.studentcourseid, self.grade))
+
 
     class Meta:
         managed = False
         db_table = 'StudentCourses'
 
 
+@python_2_unicode_compatible
 class Students(models.Model):
     studentid = models.AutoField(db_column='studentID', primary_key=True)  # Field name made lowercase.
-    firstname = models.CharField(db_column='firstName', max_length=45)  # Field name made lowercase.
-    lastname = models.CharField(db_column='lastName', max_length=45)  # Field name made lowercase.
-    dob = models.DateField()
-    email = models.CharField(max_length=125, blank=True, null=True)
-    username = models.CharField(db_column='userName', max_length=15)  # Field name made lowercase.
-    userpassword = models.TextField(db_column='userPassword', blank=True, null=True)  # Field name made lowercase.
+    username = models.CharField(db_column='userName', unique=True, max_length=10)  # Field name made lowercase.
+    userpassword = models.CharField(db_column='userPassword', max_length=255, blank=True, null=True)  # Field name made lowercase.
     studenttrack = models.ForeignKey('Tracks', db_column='studentTrack')  # Field name made lowercase.
     registerdate = models.DateField(db_column='registerDate', blank=True, null=True)  # Field name made lowercase.
-
     def __str__(self):
-        return "%s %s %s" % (self.studentid, self.firstname, self.lastname)
-
-    def __unicode__(self):
-        return u"%s %s %s" % (self.studentid.decode('utf8'), self.firstname.decode('utf8'), self.lastname.decode('utf8'))
+        return smart_unicode("%s" % (self.username))
 
     class Meta:
         managed = False
         db_table = 'Students'
 
 
+@python_2_unicode_compatible
 class Trackcourses(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     trackid = models.ForeignKey('Tracks', db_column='trackID')  # Field name made lowercase.
@@ -127,7 +126,7 @@ class Trackcourses(models.Model):
     mandatory = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return (str(self.trackid) + " " + str(self.coursenumber)).encode('ascii','replace')
+        return smart_unicode("%s %s" % (self.trackid, self.coursenumber))
 
     class Meta:
         managed = False
@@ -135,6 +134,7 @@ class Trackcourses(models.Model):
         unique_together = (('trackid', 'coursenumber'),)
 
 
+@python_2_unicode_compatible
 class Tracks(models.Model):
     trackid = models.AutoField(db_column='trackID', primary_key=True)  # Field name made lowercase.
     trackname = models.CharField(db_column='trackName', max_length=75, blank=True, null=True)  # Field name made lowercase.
@@ -142,7 +142,7 @@ class Tracks(models.Model):
     divisionid = models.ForeignKey(Divisions, db_column='divisionID')  # Field name made lowercase.
 
     def __str__(self):
-        return (str(self.trackid) + " " + str(self.trackname)).encode('ascii','replace')
+        return smart_unicode("%s %s" % (self.trackid, self.trackname))
 
     class Meta:
         managed = False

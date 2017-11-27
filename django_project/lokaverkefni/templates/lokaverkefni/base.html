@@ -22,7 +22,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav mr-auto justify-content-center container-fluid btn-group">
-                    {% if request.path == "/lokaverkefni/" %}
+                    {% if request.path == "/" %}
                     <li class="nav-item active btn btn-secondary">
                         <a class="nav-link " href="/">Heim<span class="sr-only">(current)</span></a>
                     </li>
@@ -31,7 +31,7 @@
                         <a class="nav-link" href="/">Heim</a>
                     </li>
                     {% endif %}
-                    {% if request.path == "/lokaverkefni/chart/" %}
+                    {% if request.path == "/chart/" %}
                     <li class="nav-item active btn btn-secondary">
                         <a class="nav-link" href="/chart/">Áfangakort<span class="sr-only">(current)</span></a>
                     </li>
@@ -40,7 +40,7 @@
                         <a class="nav-link" href="/chart/">Áfangakort</a>
                     </li>
                     {% endif %}
-                    {% if request.path == "/lokaverkefni/nextSemester/" %}
+                    {% if request.path == "/nextSemester/" %}
                     <li class="nav-item active btn btn-secondary">
                         <a class="nav-link" href="/nextSemester/">Listaval<span class="sr-only">(current)</span></a>
                     </li>
@@ -49,7 +49,7 @@
                         <a class="nav-link" href="/nextSemester/">Listaval</a>
                     </li>
                     {% endif %}
-                    {% if request.path == "/lokaverkefni/about/" %}
+                    {% if request.path == "/about/" %}
                     <li class="nav-item active btn btn-secondary">
                         <a class="nav-link" href="/nextSemester/">Um síðu<span class="sr-only">(current)</span></a>
                     </li>

@@ -72,7 +72,7 @@ create table Restrictors
 	restrictorType char(1) default '1',
 	constraint restrictor_PK primary key(ID),
 	constraint restrictor_courseNum_UK unique key (courseNumber,restrictorID),
-	constraint course_course_FK foreign key (courseNumber) references Courses (courseNumber),
+	constraint course_course_FK foreign key (restrictorID) references Courses (courseNumber),
 	constraint restrictor_course_FK foreign key (courseNumber) references Courses (courseNumber)
 );
 
@@ -81,9 +81,9 @@ create table TrackCourses
 (
 	ID int auto_increment,
 	trackID int not null,
-    courseNumber char(10) not null,
+    courseNumber char(11) not null,
     semesterOfStudy tinyint unsigned null,
-    mandatory tinyint unsigned,
+    mandatory tinyint unsigned default 1,
 	constraint trackcourse_PK primary key(ID),
     constraint trackcourse_UQ unique key(trackID,courseNumber),
     constraint track_course_tracks_FK foreign key(trackID) references Tracks(trackID),
@@ -93,16 +93,13 @@ create table TrackCourses
 create table Students
 (
 	studentID int auto_increment not null,                                                                                                                   
-    firstName varchar(45) not null,
-    lastName varchar(45) not null,
-    dob date not null,
-    email varchar(125) null,
-    userName varchar(15) not null,
-    userPassword blob,
+    userName char(10) not null,
+    userPassword varchar(255),
     studentTrack int not null,
     registerDate date null,
     constraint student_PK primary key(studentID),
-    constraint student_track_FK foreign key(studentTrack) references Tracks(trackID)
+    constraint student_track_FK foreign key(studentTrack) references Tracks(trackID),
+    constraint student_UK unique key(userName)
 );
 
 create table StudentCourses

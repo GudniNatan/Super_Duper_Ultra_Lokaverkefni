@@ -27,6 +27,7 @@ class RegisterForm(forms.Form):
     register_username = KennitalaField()
     register_password = forms.CharField(validators=[validatorPass])
     register_password_repeat = forms.CharField(validators=[validatorPass])
+    track_id = forms.DecimalField()
 
     def __init__(self, value):
         super(RegisterForm, self).__init__(value)

@@ -45,6 +45,14 @@
                     <p for="register_password_repeat">Lykilorð (endurtekið):</p>
                     <input class="form-control input-md" id="register_password_repeat" name="register_password_repeat" placeholder="Lykilorð (endurtekið)*" required="" pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{4,255}$" title="Lykilorð" type="password">
                 </div>
+                <div class="form-group">
+                    <p for="track_id">Braut:</p>
+                    <select name="track_id">
+                        {% for option in tracks %}
+                        <option value="{{option.0}}">{{option.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             <button name="sendregister" type="submit" class="btn btn-primary">Nýskrá</button>
             <p class="text-muted"><i>*Fylla þarf út þessa reiti</i></p>
         </form>
