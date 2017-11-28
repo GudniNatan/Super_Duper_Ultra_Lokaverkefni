@@ -1,10 +1,6 @@
 insert into Schools(schoolName) values('Tækniskólinn');
 
 
-insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2015','2015-08-01','2015-12-31');
-insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Vor2016','2016-01-01','2016-05-31');
-insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2016','2016-08-01','2016-12-31');
-insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Vor2017','2017-01-01','2017-05-31');
 insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2017','2017-08-01','2017-12-31');
 insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Vor2018','2018-01-01','2018-05-31');
 insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2018','2018-08-01','2018-12-31');
@@ -13,6 +9,10 @@ insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2019
 insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Vor2020','2020-01-01','2020-05-31');
 insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2020','2020-08-01','2020-12-31');
 insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Vor2021','2021-01-01','2021-05-31');
+insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2021','2021-08-01','2021-12-31');
+insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Vor2022','2022-01-01','2022-05-31');
+insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Haust2022','2022-08-01','2022-12-31');
+insert into Semesters(semesterName,semesterStarts,semesterEnds)values('Vor2023','2023-01-01','2023-05-31');
 
 
 insert into Divisions(divisionName,schoolID)values('Byggingatækniskólinn',1);
@@ -208,4 +208,21 @@ values('Katrín','Jónsdóttir','2000-09-29','katarina@emil.com','stína-stuð',
       ('Gunnar','Sigurðarson','1997-12-05','gusi@fakemail.eu','gunnsi',aes_encrypt('G!m89F&&vC','xAklwzVY3Q?Jk'),9,'2014-01-01'),
       ('Jón','Jónsson','2000-03-31','jojo@nomailatall.de','nonniboy',aes_encrypt('Ax49%x25B','xAklwzVY3Q?Jk'),9,'2017-08-01');
       
+*/
+
+/*
+
+INSERT INTO StudentCourses(semesterTaken, studentID, courseNumber)
+VALUES
+(1, '1803982879', 'FORR1FG05AU'),
+(1, '1803982879', 'FORR2FA05BU'),
+(1, '1803982879', 'KEST1TR05AU'),
+(1, '1803982879', 'KEST2VJ05BU'),
+(2, '1803982879', 'GAGN1NG05AU'),
+(2, '1803982879', 'GAGN2HS05BU'),
+(3, '1803982879', 'VEFÞ1VG05AU'),
+(3, '1803982879', 'VEFÞ2VH05BU'),
+(3, '1803982879', 'VEFÞ2VÞ05DU');
+
+
 */

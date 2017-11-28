@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
 
     <link href="{% sass_src 'lokaverkefni/scss/custom.scss' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'lokaverkefni/open-iconic-master/font/css/open-iconic-bootstrap.min.css' %}" rel="stylesheet" type="text/css">
     {% block styles %}{% endblock %}
 </head>
 
@@ -21,7 +22,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav mr-auto justify-content-center container-fluid btn-group">
+                <ul class="navbar-nav mr-auto justify-content-center container-fluid btn-group p-0 pr-md-2">
                     {% if request.path == "/" %}
                     <li class="nav-item active btn btn-secondary">
                         <a class="nav-link " href="/">Heim<span class="sr-only">(current)</span></a>
@@ -59,6 +60,11 @@
                     </li>
                     {% endif %}
                 </ul>
+                {% if userName %}
+                <li class="nav-item btn btn-secondary col-auto mt-2 mt-md-0">
+                    <a class="nav-link text-light" href="/logout/"><span class="oi oi-account-logout" title="account logout" aria-hidden="true"></span></a>
+                </li>
+                {% endif %}
             </div>
         </nav>
     </header>

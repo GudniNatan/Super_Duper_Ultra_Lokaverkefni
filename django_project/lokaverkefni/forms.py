@@ -15,7 +15,7 @@ class KennitalaField(forms.CharField):
 
         if not validateKennitala.validate(value):
             raise forms.ValidationError(
-                _('%(value)s er ekki kennitala'),
+                _('%s er ekki kennitala' % (value)),
                 params={'value': value},
             )
 
@@ -41,7 +41,7 @@ class RegisterForm(forms.Form):
         if register_password and register_password_repeat:
             if register_password != register_password_repeat:
                 raise forms.ValidationError(
-                    _('Password mismatch.'),
+                    _(u'Lykilorð stemma ekki'),
                     code='invalid',
                     params={},
                 )

@@ -105,10 +105,10 @@ create table Students
 create table StudentCourses
 (
 	studentCourseID int auto_increment not null,
-    grade tinyint,
+    grade tinyint null,
     semesterTaken int not null,
     studentID int not null,
-    courseNumber char(10) not null,
+    courseNumber char(11) not null,
     constraint studentcourse_PK primary key(studentCourseID),
     constraint studentcourse_semester foreign key(semesterTaken) references Semesters(semesterID),
     constraint studentcourse_student foreign key(studentID) references Students(studentID),
