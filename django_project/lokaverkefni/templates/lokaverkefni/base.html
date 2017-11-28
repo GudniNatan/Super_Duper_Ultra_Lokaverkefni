@@ -24,45 +24,45 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav mr-auto justify-content-center container-fluid btn-group p-0 pr-md-2">
                     {% if request.path == "/" %}
-                    <li class="nav-item active btn btn-secondary">
+                    <li class="nav-item active btn btn-secondary" title="Heim">
                         <a class="nav-link " href="/">Heim<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
-                    <li class="nav-item btn btn-secondary">
+                    <li class="nav-item btn btn-secondary" title="Heim">
                         <a class="nav-link" href="/">Heim</a>
                     </li>
                     {% endif %}
                     {% if request.path == "/chart/" %}
-                    <li class="nav-item active btn btn-secondary">
+                    <li class="nav-item active btn btn-secondary" title="Áfangakort">
                         <a class="nav-link" href="/chart/">Áfangakort<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
-                    <li class="nav-item btn btn-secondary">
+                    <li class="nav-item btn btn-secondary" title="Áfangakort">
                         <a class="nav-link" href="/chart/">Áfangakort</a>
                     </li>
                     {% endif %}
                     {% if request.path == "/nextSemester/" %}
-                    <li class="nav-item active btn btn-secondary">
-                        <a class="nav-link" href="/nextSemester/">Listaval<span class="sr-only">(current)</span></a>
+                    <li class="nav-item active btn btn-secondary" title="Listaval">
+                        <a class="nav-link" href="/nextSemester/">Flýtivals<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
-                    <li class="nav-item btn btn-secondary">
-                        <a class="nav-link" href="/nextSemester/">Listaval</a>
+                    <li class="nav-item btn btn-secondary" title="Listaval">
+                        <a class="nav-link" href="/nextSemester/">Flýtival</a>
                     </li>
                     {% endif %}
                     {% if request.path == "/about/" %}
-                    <li class="nav-item active btn btn-secondary">
-                        <a class="nav-link" href="/nextSemester/">Um síðu<span class="sr-only">(current)</span></a>
+                    <li class="nav-item active btn btn-secondary" title="Um síðu">
+                        <a class="nav-link" href="/about/">Um síðu<span class="sr-only">(current)</span></a>
                     </li>
                     {% else %}
-                    <li class="nav-item btn btn-secondary">
-                        <a class="nav-link" href="/nextSemester/">Um síðu</a>
+                    <li class="nav-item btn btn-secondary" title="Um síðu">
+                        <a class="nav-link" href="/about/">Um síðu</a>
                     </li>
                     {% endif %}
                 </ul>
                 {% if userName %}
-                <li class="nav-item btn btn-secondary col-auto mt-2 mt-md-0">
-                    <a class="nav-link text-light" href="/logout/"><span class="oi oi-account-logout" title="account logout" aria-hidden="true"></span></a>
+                <li class="nav-item btn btn-secondary col-auto mt-2 mt-md-0" title="Skrá Út">
+                    <a class="nav-link text-light" href="/logout/"><span class="oi oi-account-logout" aria-hidden="true"></span></a>
                 </li>
                 {% endif %}
             </div>

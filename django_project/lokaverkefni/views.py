@@ -89,6 +89,17 @@ def chart(request):
     }
     return render(request, path, context)
 
+def about(request):
+    path = 'lokaverkefni/about.html'
+    userName = request.session.get("kt")
+    context = {
+        "year": date.today().year,
+        'current_path': request.get_full_path(),
+        "userName": userName,
+    }
+    return render(request, path, context)
+
+
 def nextSemester(request):
     path = 'lokaverkefni/nextSemester.html'
     userName = request.session.get("kt")

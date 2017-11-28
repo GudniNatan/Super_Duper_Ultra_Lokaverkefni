@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^chart/$', views.chart, name='chart'),
     url(r'^logout/$', views.logout_view, name='logout_view'),
+    url(r'^about/$', views.about, name='about'),
 ]
