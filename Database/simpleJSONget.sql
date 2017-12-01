@@ -1,3 +1,15 @@
+delimiter $$
+drop FUNCTION if exists aquiredCredits $$
+
+create FUNCTION aquiredCredits( user_name char(10) ) RETURNS JSON
+begin
+	DECLARE j json;
+
+end $$
+delimiter ;
+
+
+
 DROP FUNCTION IF EXISTS courseJSON;
 DELIMITER //
 
@@ -7,14 +19,18 @@ BEGIN
 	DECLARE v_finished INTEGER DEFAULT 0;
     DECLARE courseInfo JSON;
 	DECLARE cur_course char(11);
+    DECLARE cur_mincredits int;
+    DECLARE cur_credits int;
     DECLARE restrictor char(11);
 	DECLARE res_type char(1);
     DECLARE res_obj json;
     DECLARE restrictorArray json;
+    DECLARE final json;
+    DECLARE divisionName varchar(255);
 
     	
 	DEClARE course_cursor CURSOR FOR 
-		SELECT courseNumber FROM Courses;
+		SELECT courseNumber, minCredits, courseCredits FROM Courses;
 	
 	DEClARE restrictor_cursor CURSOR FOR 
 		SELECT restrictorID, restrictorType FROM Restrictors
@@ -30,7 +46,7 @@ BEGIN
 	OPEN course_cursor;
 		courses_loop: LOOP
                 
-			FETCH course_cursor INTO cur_course;     
+			FETCH course_cursor INTO cur_course, cur_mincredits, cur_credits;     
             
 
             					
@@ -57,7 +73,12 @@ BEGIN
 				END LOOP restrictor_loop;
 			CLOSE restrictor_cursor;
             
-			SET j = JSON_ARRAY_APPEND(j, '$', JSON_OBJECT('id', cur_course, 'precursors', restrictorArray));                                        
+			SELECT Divisions.divisionName INTO divisionName FROM Divisions
+            INNER JOIN Courses
+            ON Courses.divisionID = Divisions.divisionID
+            WHERE Courses.courseNumber = cur_course;
+            
+			SET j = JSON_ARRAY_APPEND(j, '$', JSON_OBJECT('id', cur_course, 'precursors', restrictorArray, 'minCredits', cur_mincredits, 'divisionName', divisionName, 'credits', cur_credits));
 		END LOOP courses_loop;
 	CLOSE course_cursor;
     RETURN(JSON_UNQUOTE(j));
@@ -65,4 +86,110 @@ END//
 
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS courseJSONByStudent;
+DELIMITER //
+
+CREATE FUNCTION courseJSONByStudent(user_name char(10)) RETURNS TEXT
+BEGIN
+    DECLARE j JSON;
+	DECLARE v_finished INTEGER DEFAULT 0;
+    DECLARE courseInfo JSON;
+	DECLARE cur_course char(11);
+	DECLARE cur_mincredits int;
+	DECLARE cur_credits int;
+    DECLARE restrictor char(11);
+	DECLARE res_type char(1);
+    DECLARE res_obj json;
+    DECLARE restrictorArray json;
+    DECLARE courseGrade int default null;
+    DECLARE student_ID int;
+    DECLARE student_track int;
+    DECLARE completed bool default false;
+    DECLARE divisionName varchar(255);
+
+
+	DEClARE course_cursor CURSOR FOR 
+		SELECT TrackCourses.courseNumber, Courses.minCredits, Courses.courseCredits FROM TrackCourses
+        INNER JOIN Courses
+        ON TrackCourses.courseNumber = Courses.courseNumber
+        WHERE trackID = student_track;
+	
+	DEClARE restrictor_cursor CURSOR FOR 
+		SELECT restrictorID, restrictorType FROM Restrictors
+			WHERE courseNumber = cur_course;
+        
+		-- declare NOT FOUND handler
+	DECLARE CONTINUE HANDLER 
+		FOR NOT FOUND SET v_finished = 1;
+	
+    SET student_ID = (SELECT studentID FROM Students where userName = user_name);
+    SET student_track = (SELECT studentTrack FROM Students where userName = user_name);
+    
+    SET j = JSON_ARRAY();
+    
+	OPEN course_cursor;
+		courses_loop: LOOP
+                
+			FETCH course_cursor INTO cur_course, cur_mincredits, cur_credits;     
+            
+
+            					
+			IF v_finished = 1 THEN 
+				LEAVE courses_loop;
+			END IF;
+            
+			SET restrictorArray = JSON_ARRAY();
+            
+            
+			OPEN restrictor_cursor;
+				restrictor_loop: LOOP
+                
+					FETCH restrictor_cursor INTO restrictor, res_type;                    
+					
+					IF v_finished = 1 THEN 
+						SET v_finished = 0;
+						LEAVE restrictor_loop;
+					END IF;
+                    SET res_obj = JSON_OBJECT('id', restrictor, 'type', res_type);
+                    
+                    SET restrictorArray = JSON_ARRAY_APPEND(restrictorArray, '$', res_obj);
+                    
+				END LOOP restrictor_loop;
+			CLOSE restrictor_cursor;
+            
+            SET completed = (SELECT EXISTS(
+						SELECT studentCourseID 
+							FROM StudentCourses 
+                            INNER JOIN TrackCourses
+                            ON TrackCourses.ID = StudentCourses.trackCourseID
+                            WHERE TrackCourses.courseNumber = cur_course and studentID = student_ID));
+                            
+			SELECT Divisions.divisionName INTO divisionName FROM Divisions
+            INNER JOIN Courses
+            ON Courses.divisionID = Divisions.divisionID
+            WHERE Courses.courseNumber = cur_course;
+                        
+			SET j = JSON_ARRAY_APPEND(j, '$', JSON_OBJECT('id', cur_course, 'precursors', restrictorArray, 'completed', completed, 'minCredits', cur_mincredits, 'divisionName', divisionName, 'credits', cur_credits));
+		END LOOP courses_loop;
+	CLOSE course_cursor;
+    RETURN(JSON_UNQUOTE(j));
+END//
+
+DELIMITER ;
+
+
 SELECT courseJSON();
+SELECT courseJSONByStudent('1803982879');
+
+
+SELECT ISNULL(null);
+SELECT EXISTS(SELECT studentCourseID FROM StudentCourses WHERE courseNumber = 'VEFÞ2VÞ05DU');
+SELECT * FROM StudentCourses;
+SELECT * FROM TrackCourses;
+
+SELECT Courses.* FROM Courses
+	INNER JOIN TrackCourses
+		ON Courses.courseNumber = TrackCourses.courseNumber
+    INNER JOIN StudentCourses
+		ON TrackCourses.courseNumber = StudentCourses.courseNumber
+    WHERE StudentCourses.studentID = 1;

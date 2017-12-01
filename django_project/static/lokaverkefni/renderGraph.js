@@ -2,20 +2,23 @@
 
 	// Create the renderer
 	let renderD3 = new dagreD3.render();
+	//Prepare the dagre graph with the 'longest-path' ranker in order to maximize readability
 	let g = new dagreD3.graphlib.Graph({compound:true})
-		  .setGraph({rankdir: "TB",align: "UL", ranksep: 40, ranker: "longest-path", acyclicer:"greedy", marginy:50, marginx:50, edgesep: 40})
+		  .setGraph({rankdir: "TB",align: "UL", ranksep: 40, ranker: "tight-tree", acyclicer:"greedy", marginy:50, marginx:50, edgesep: 100, ranksep: 80})
 		  .setDefaultEdgeLabel(function() { return {}; });
 
 	let svg;
+
+	//The main function. It fetches JSON from the HTML document, written in by Django.
 	function main(argument) {
 		if (jsonData) {
+			//After it has the JSON, it creates the graph, and initates the rendering
 			createGraph(jsonData);
 			postRender();
 		}
 		else{
 			console.log("Error fetching JSON");
-			render();
-			postRender();
+			alert("JSON ERROR");
 		}
 		function postRender(argument) {
 			// body...
@@ -41,6 +44,8 @@
 				// body...
 				event.preventDefault();
 			});
+
+			updateGraph();
 		}
 
 		document.querySelector("#submitCourses").addEventListener("click", function (event) {
@@ -111,7 +116,7 @@
 	}
 
 	function getJSONNodeByID(ID) {
-		// body...
+		// Simply runs through all the nodes on the graph until the requested one is returned
 		for (let i = jsonData.length - 1; i >= 0; i--) {
 			if(jsonData[i].id == ID){
 				return jsonData[i];
@@ -130,13 +135,9 @@
 		return node;
 	}
 	function collectSelectedCourses(){
-		//let textNode = document.querySelectorAll(".selectedCourse.availableCourse g g text tspan");
-		//let nodes = d3.selectAll(".selectedCourse.availableCourse");
-		//console.log(nodes);
 		courses = [];
 		g.nodes().forEach(function(v) {
-	    	//console.log("Node " + v + ": " + JSON.stringify(g.node(v)));
-	    	//console.log(g.node(v));
+
 	    	if (g.node(v).elem.classList.contains("selectedCourse")){
 
 	    		courses.push(v);
@@ -146,10 +147,17 @@
 	}
 
 	function createGraph(jsonData) { //jesús kristur, miskunna þú mér fyrir þennan kóða.
-		// body...
+		// This function is clearly a complete monstrosity
+		// So what is even going on here?
+		// This function takes all the JSON data, and sorts it and prepares it for display.
+		// Because the JSON will not actually include all the data needed to display the graph
+		// and accurately follow all rules.
 		let updateNodesPre = [];
 		let updateNodesChild = [];
 
+		g.setNode('singlesGroup', {});
+
+		//Node labeling and linking
 		for (let k = jsonData.length - 1; k >= 0; k--) {
 			if (!jsonData[k].children) {
 				jsonData[k].children = [];
@@ -160,19 +168,46 @@
 			for (var l = jsonData[k].precursors.length - 1; l >= 0; l--) {
 				let pre = jsonData[k].precursors[l];
 				let pre_node = getJSONNodeByID(pre.id);
-				if (!pre_node.children) {
-					pre_node.children = [];
+				if (pre_node) 
+				{
+					if (!pre_node.children) {
+						pre_node.children = [];
+					}
+					pre_node.children.push({'id': jsonData[k].id, 'type': pre.type});
 				}
-				pre_node.children.push({'id': jsonData[k].id, 'type': pre.type});
+				else
+				{
+					alert("Eitthvað er að JSON frá gagnagrunninum. Líklegast vantar einn áfanga í trackcourses!") 
+				}
 			}
 		}
 
+		// Completion and availability followoing precursor rules.
+		// Also adds css classes for quality of life 
 		for (let i = jsonData.length - 1; i >= 0; i--) {
 			let node = jsonData[i];
 			let classes = "";
-			if (node.completed) { classes += "completedCourse "; }
-			else if (node.precursors.length == 0) { classes += "availableCourse "}
+			if (node.completed) 
+			{ 
+				classes += "completedCourse "; 
+			}
+			else
+			{
+				let available = true;
+				for (var j = node.precursors.length - 1; j >= 0; j--) {
+					if(!node.precursors[j].completed)
+					{
+						available = false;
+						break;
+					}
+				}
+				if (available) { classes += "availableCourse "}
+			}
+
+			//Set the node on the graph with all classes
 			g.setNode(node.id, {label: node.id, class:classes});
+
+			//These next two if sentences really only matter if you take into account "fastur samfari"
 			if (node.precursors.length > 0) {
 				let clustered = false;
 				for (let j = node.precursors.length - 1; j >= 0; j--) {
@@ -211,6 +246,7 @@
 				}
 			}
 		}
+		// These next 2 for loops will correct any errors related to defining precursor type 3.
 		for (var i = updateNodesPre.length - 1; i >= 0; i--) {
 			let info = updateNodesPre[i];
 			let n = getJSONNodeByID(info[0]);
@@ -229,6 +265,7 @@
 				}
 			}
 		}
+		//This for loop actually draws the connections between all the nodes on the graph
 		for (let i = jsonData.length - 1; i >= 0; i--) {
 			let node = jsonData[i];
 			for (let j = node.precursors.length - 1; j >= 0; j--) {
@@ -237,18 +274,42 @@
 				let parent_node = getJSONNodeByID(parent.id);
 				let samLabel;
 				if (parent.type == '3') {
+					samLabel = "(fastur samfari)";
+				}
+				if(parent.type == '2')
+				{
 					samLabel = "(samfari)";
 				}
-				g.setEdge(parent.id, tempid, {curve: d3.curveBasis, label: samLabel});
+				let edgeminlen = 1;
+				let edgeWeight = 2;
+				for (let k = tempid.length - 1; k >= 0; k--) {
+					try
+					{
+						if(tempid[k] == parent.id[k])
+						{
+							edgeWeight *= 2;
+						}
+					}
+					catch (e){
+						break;
+					}
+				}
+				let edgeclass = "";
+				if (edgeWeight <= 32) 
+				{
+					edgeclass="low-weight";
+				}
+				g.setEdge(parent.id, tempid, {curve: d3.curveBasis, label: samLabel, weight: edgeWeight, class: edgeclass, minlen: edgeminlen});
+			}
+			if (node.precursors.length == 0 && node.children.length == 0) {
+				g.setParent(node.id, 'singlesGroup');
 			}
 		}
-		console.log(jsonData);
-
 		render();
 	}
 
 	function updateGraph() {
-		// body...
+		// Updates the graph, locking in completed courses, and unlocking newly available courses.
 		for (let i = jsonData.length - 1; i >= 0; i--) {
 			let node = jsonData[i]
 			let precursors = jsonData[i].precursors;
@@ -274,6 +335,8 @@
 	}
 
 	function post(params, path="", method="post") {
+		// Currently not in use, but you would need to submit to the server from this page
+		// to update the main page display
 	    var form = document.getElementById('courseDataForm');
 	    for(var key in params) {
 	        if(params.hasOwnProperty(key)) {
@@ -292,8 +355,6 @@
 
 		// Set up an SVG group so that we can translate the final graph.
 		let parent = d3.select(d3.select("svg").node().parentNode);
-		//d3.select("svg").remove();
-		//svg = parent.append("svg");
 		svg = d3.select("svg");
 
 		svg.attr("width", Math.min(svg.node().getBoundingClientRect().width, svg.node().parentNode.getBoundingClientRect().width))
@@ -308,24 +369,22 @@
 			inner.attr("transform", d3.event.transform);
 		  });
 
+		//Adds a filter, so that you will not be able to pan the graph with the left mouse button
 		zoom.filter(function(i, j, k, l) {
-			// body...
 			if (d3.event.type == 'mousedown') {
 				return d3.event.button;
 			}
 			return !d3.event.button;
 		})
 
+		//Apply the zoom support to the main SVG
 		svg.call(zoom);
 
 
-
 		// Center the graph
-
-		var initialScale = 0.75;
-
+		var initialScale = 0.5;
 		svg.attr('height', g.graph().height * initialScale + 40);
-
+		
 		let transform = d3.zoomTransform(svg.node()).translate((svg.attr("width") - g.graph().width * initialScale) / 2, 0)
 													.scale(initialScale);
 		svg.call(zoom.transform, transform);
@@ -337,6 +396,7 @@
 			j[i].classList.add('course');
 			for (let k = jsonData.length - 1; k >= 0; k--) {
 				if (jsonData[k].id == d){
+					//Store a reference to the actual DOM node within the jsonData
 					jsonData[k].node = j[i];
 				}
 			}

@@ -19,6 +19,8 @@ class Courses(models.Model):
     coursename = models.CharField(db_column='courseName', max_length=75)  # Field name made lowercase.
     coursecredits = models.IntegerField(db_column='courseCredits')  # Field name made lowercase.
     mincredits = models.IntegerField(db_column='minCredits')  # Field name made lowercase.
+    divisionid = models.ForeignKey('Divisions', db_column='divisionID')  # Field name made lowercase.
+
     def __str__(self):
         return smart_unicode(self.coursenumber) + u" " + smart_unicode(self.coursename)
 
@@ -43,8 +45,8 @@ class Divisions(models.Model):
 @python_2_unicode_compatible
 class Restrictors(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    restrictorid = models.CharField(db_column='restrictorID', max_length=11)  # Field name made lowercase.
-    coursenumber = models.ForeignKey(Courses, db_column='courseNumber')  # Field name made lowercase.
+    restrictorid = models.ForeignKey(Courses, db_column='restrictorID', related_name='restrictorID')  # Field name made lowercase.
+    coursenumber = models.ForeignKey(Courses, db_column='courseNumber', related_name='courseNumber')  # Field name made lowercase.
     restrictortype = models.CharField(db_column='restrictorType', max_length=1, blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
@@ -91,10 +93,10 @@ class Studentcourses(models.Model):
     grade = models.IntegerField(blank=True, null=True)
     semestertaken = models.ForeignKey(Semesters, db_column='semesterTaken')  # Field name made lowercase.
     studentid = models.ForeignKey('Students', db_column='studentID')  # Field name made lowercase.
-    coursenumber = models.ForeignKey('Trackcourses', db_column='courseNumber')  # Field name made lowercase.
+    trackcourseid = models.ForeignKey('Trackcourses', db_column='trackCourseID',)  # Field name made lowercase.
 
     def __str__(self):
-        return smart_unicode("%s %s" % (self.studentcourseid, self.grade))
+        return smart_unicode("%s %s" % (self.studentid.username, self.coursenumber_id))
 
 
     class Meta:

@@ -11,7 +11,8 @@ from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import smart_unicode
 from django.contrib.auth import logout
-from getSemesterData import getSemesters
+from getSemesterData import getSemesters, getTrimmedSemesters
+import AvailableCourses
 
 # Create your views here.
 def index(request):
@@ -60,7 +61,7 @@ def index(request):
     userName = request.session.get("kt")
     semesterData = None
     if userName:
-        semesterData = getSemesters(userName)
+        semesterData = getTrimmedSemesters(userName)
 
     context = {
         "year":date.today().year,
@@ -76,11 +77,14 @@ def index(request):
 
 def chart(request):
     path = 'lokaverkefni/chart.html'
+    userName = request.session.get("kt")
     with connections['mysql'].cursor() as cursor:
-        cursor.execute("SELECT courseJSON()")
+        if userName:
+            cursor.execute("SELECT courseJSONByStudent('%s')" % userName)
+        else:
+            cursor.execute("SELECT courseJSON()")
         row = cursor.fetchone()
 
-    userName = request.session.get("kt")
     context = {
         "year": date.today().year,
         "data": u"%s" % (row[0]),
@@ -103,10 +107,12 @@ def about(request):
 def nextSemester(request):
     path = 'lokaverkefni/nextSemester.html'
     userName = request.session.get("kt")
+    courseData = AvailableCourses.get(userName)
     context = {
         "year": date.today().year,
         'current_path': request.get_full_path(),
         "userName": userName,
+        "courseData": courseData,
     }
     return render(request, path, context)
 

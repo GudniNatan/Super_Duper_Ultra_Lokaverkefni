@@ -19,6 +19,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^chart/$', views.chart, name='chart'),
+    url(r'^nextSemester/$', views.nextSemester, name='nextSemester'),
     url(r'^logout/$', views.logout_view, name='logout_view'),
     url(r'^about/$', views.about, name='about'),
 ]

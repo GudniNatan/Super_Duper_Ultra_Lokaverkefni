@@ -6,7 +6,7 @@ def getSelectedCoursesBySemester(student, semester):
     courses = Studentcourses.objects.filter(studentid=student.studentid, semestertaken=semester.semesterid)
 
     for c in courses:
-        courseList.append(Courses.objects.get(coursenumber=c.coursenumber_id))
+        courseList.append(Courses.objects.get(trackcourses=c.trackcourseid))
 
     return courseList
 
@@ -19,3 +19,21 @@ def getSemesters(userName):
     for semester in semesters:
         finalData.append((semester.semestername, getSelectedCoursesBySemester(student, semester)))
     return finalData
+
+def getTrimmedSemesters(userName, getFinalIndex=False):
+    data = getSemesters(userName)
+    startIndex = -1
+    finalIndex = 0
+    for semester in data:
+        if semester[1]:
+            if startIndex == -1:
+                startIndex = data.index(semester)
+            finalIndex = data.index(semester)
+    if finalIndex < len(data) - 1:
+        finalIndex += 1
+    if getFinalIndex:
+        return finalIndex
+    return data[startIndex:finalIndex+1]
+
+def getFinalRegisteredSemesterIndex(userName):
+    return getTrimmedSemesters(userName, True)

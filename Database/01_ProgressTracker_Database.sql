@@ -50,13 +50,16 @@ create table Tracks
 -- All the courses in the database
 -- minCredits: The minimum number of credits you are required to have to be able to take this course.
 -- minCredits works independantly per division.
+-- That means a division key is neccesary
 create table Courses 
 (
 	courseNumber char(11),
 	courseName varchar(75) not null,
-	courseCredits int not null default 3,
+	courseCredits int not null default 5,
     minCredits int not null default 0,
-	constraint course_PK primary key(courseNumber)
+	divisionID int not null,
+	constraint course_PK primary key(courseNumber),
+	constraint course_division_FK foreign key(divisionID) references Divisions(divisionID)
 );
 
 -- A course may or may not have restrictors applied to them
@@ -76,7 +79,7 @@ create table Restrictors
 	constraint restrictor_course_FK foreign key (courseNumber) references Courses (courseNumber)
 );
 
--- Courses belonging to a certain track. A track can belong to more then one track(N:M)
+-- Courses belonging to a certain track. A course can belong to more then one track(N:M)
 create table TrackCourses
 (
 	ID int auto_increment,
@@ -108,9 +111,9 @@ create table StudentCourses
     grade tinyint null,
     semesterTaken int not null,
     studentID int not null,
-    courseNumber char(11) not null,
+    trackCourseID int not null,
     constraint studentcourse_PK primary key(studentCourseID),
     constraint studentcourse_semester foreign key(semesterTaken) references Semesters(semesterID),
     constraint studentcourse_student foreign key(studentID) references Students(studentID),
-    constraint studentcourse_trackcourse_FK foreign key(courseNumber) references TrackCourses(courseNumber)
+    constraint studentcourse_trackcourse_FK foreign key(trackCourseID) references TrackCourses(ID)
 );
