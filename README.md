@@ -3,3 +3,4 @@
 
 ## Hægt er að skoða og prófa allt á [gng.is](https://gng.is/)
 
+## Skoðaðu [wiki](https://github.com/GudniNatan/Super_Duper_Ultra_Lokaverkefni/wiki) fyrir fleiri upplýsingar og myndband
