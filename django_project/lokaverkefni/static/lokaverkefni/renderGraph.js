@@ -71,6 +71,15 @@
 				node.completed = true;
 			}
 			updateGraph();
+			console.log(selected);
+			for (var i = selected.length - 1; i >= 0; i--) {
+				let hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+			    hiddenField.setAttribute("name", "courses[]");
+			    hiddenField.setAttribute("value", selected[i]);
+				hiddenField.id = selected[i];
+				form.appendChild(hiddenField);
+			}
 			//post(selected);
 
 		});
@@ -451,10 +460,11 @@
 		  });
 
 		//Adds a filter, so that you will not be able to pan the graph with the left mouse button
+		//This is to prevent interference from clicking.		
 		zoom.filter(function(i, j, k, l) {
 			if (d3.event.type == 'mousedown') {
 				return d3.event.button;
-			}
+			}	
 			return !d3.event.button;
 		})
 
@@ -464,7 +474,7 @@
 
 		// Center the graph
 		var initialScale = 0.5;
-		svg.attr('height', g.graph().height * initialScale + 40);
+		//svg.attr('height', g.graph().height * initialScale + 40);
 		
 		let transform = d3.zoomTransform(svg.node()).translate((svg.attr("width") - g.graph().width * initialScale) / 2, 0)
 													.scale(initialScale);

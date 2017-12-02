@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^nextSemester/$', views.nextSemester, name='nextSemester'),
     url(r'^logout/$', views.logout_view, name='logout_view'),
     url(r'^about/$', views.about, name='about'),
+    url(r'^delete/(?P<semesterName>[a-zA-Z0-9]+)/$', views.delete_view, name='delete_view'),
 ]

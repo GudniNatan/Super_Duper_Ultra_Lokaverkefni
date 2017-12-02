@@ -45,12 +45,8 @@ div#links a {
   text-decoration: none;
 }
 
-#graph {
-  min-height: 30em;
-}
-
 .clusters rect {
-  fill: $primary;
+  fill: $secondary;
   stroke: $gray-800;
   stroke-width: 1.5px;
 }
@@ -65,11 +61,17 @@ div#links a {
   stroke-width: 1.5px;
 }
 
-svg {
-  width: 100%;
-  min-height: inherit;
-  max-height: 100%;
+.svgContainer{
+  height: calc(100% - 2rem);
+  max-height: 90vh;
+  & svg {
+    width: 100%;
+    min-height: inherit;
+    height: 100%;
+    max-height: 100%;
+  }
 }
+
 
 .course {
   rect {

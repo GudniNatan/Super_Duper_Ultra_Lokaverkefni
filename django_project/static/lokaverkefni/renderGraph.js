@@ -4,7 +4,7 @@
 	let renderD3 = new dagreD3.render();
 	//Prepare the dagre graph with the 'longest-path' ranker in order to maximize readability
 	let g = new dagreD3.graphlib.Graph({compound:true})
-		  .setGraph({rankdir: "TB",align: "UL", ranksep: 40, ranker: "tight-tree", acyclicer:"greedy", marginy:50, marginx:50, edgesep: 100, ranksep: 80})
+		  .setGraph({rankdir: "UD",align: "UL", ranksep: 40, ranker: "tight-tree", acyclicer:"greedy", marginy:50, marginx:50, edgesep: 80, ranksep: 30})
 		  .setDefaultEdgeLabel(function() { return {}; });
 
 	let svg;
@@ -30,12 +30,27 @@
 
 			d3.select("g.nodes").node().addEventListener("mouseup", function( event ) {
 
-			    let node = crawlToNode(event.target, "node")
+			    let node = crawlToNode(event.target, "node");
 			    if (node && node.classList.contains("availableCourse")) {
 			    	//do something
 			    	courseClickUpdate(node);
 			    }
 			}, true);
+
+			d3.select("g.nodes").node().addEventListener("mouseover", function( event ) {
+			    let node = crawlToNode(event.target, "node")
+			    if (node) {
+			    	highlightAllParents(node);
+			    }
+			}, true);
+
+			d3.select("g.nodes").node().addEventListener("mouseout", function( event ) {
+			    let node = crawlToNode(event.target, "node")
+			    if (node) {
+			    	highlightAllParents(node, false);
+			    }
+			}, true);
+
 
 
 			//d3.select("svg").selectAll("g.node").on("mouseup", function(id) { var _node = g.node(id); console.log("Clicked " + id,_node); });
@@ -64,6 +79,7 @@
 	function courseClickUpdate(courseNode) {
 		// body...
 		courseNode.classList.toggle("selectedCourse");
+
 
 		let jsonNode;
 
@@ -137,13 +153,76 @@
 	function collectSelectedCourses(){
 		courses = [];
 		g.nodes().forEach(function(v) {
-
-	    	if (g.node(v).elem.classList.contains("selectedCourse")){
+			let elem = g.node(v).elem;
+	    	if (elem && elem.classList.contains("selectedCourse")){
 
 	    		courses.push(v);
 	    	}
 		});
 		return courses;
+	}
+
+	function highlightCourseD3Node(d3node, on=true)
+	{
+		if (on) 
+		{
+			d3node.select("rect").transition()//Set transition
+               	.style('stroke', '#ff4136')
+               	.style('stroke-width', 4);
+
+		}
+		else{
+			d3node.select("rect").transition()//Set transition
+				.transition()
+               	.style('stroke', '#bfbfbf')
+               	.style('stroke-width', 1);
+		}
+
+	}
+
+	function highlightAllParents(domNode, on=true) {
+		// Gets all parents of a particular node.
+		// Changes appearence of those nodes to highlight what courses need to be completed
+		// before this one.
+		// If on is false it will disable the highlighting.
+		let node = getJSONNodeByID(domNode.textContent);
+		let parents = getAllParents(node);
+
+		if (!domNode.classList.contains('availableCourse')) {
+			parents.push(node);
+		}
+		for (var i = parents.length - 1; i >= 0; i--) {
+			highlightCourseD3Node(d3.select(parents[i].node), on);
+		}
+
+	}
+	function getParents(node){
+		let parents = [];
+		for (var i = node.precursors.length - 1; i >= 0; i--) {
+			let n = getJSONNodeByID(node.precursors[i].id);
+			if (n.completed) {
+				continue;
+			}
+			parents.push(n);
+		}
+		return parents;
+	}
+	function getAllParents(node) {
+		// body...
+		let queue = [node];
+		let processed = [];
+		let allNodes = [];
+		while(queue.length > 0){
+			let n = queue.pop();
+			let parents = getParents(n);
+			for (var i = parents.length - 1; i >= 0; i--) {
+				if (processed.indexOf(parents[i]) == -1) {
+					queue.push(parents[i]);
+				}
+				allNodes.push(parents[i]);
+			}
+		}
+		return allNodes;
 	}
 
 	function createGraph(jsonData) { //jesús kristur, miskunna þú mér fyrir þennan kóða.
@@ -155,7 +234,6 @@
 		let updateNodesPre = [];
 		let updateNodesChild = [];
 
-		g.setNode('singlesGroup', {});
 
 		//Node labeling and linking
 		for (let k = jsonData.length - 1; k >= 0; k--) {
@@ -295,13 +373,16 @@
 					}
 				}
 				let edgeclass = "";
+				if (tempid[tempid.length-1] != parent.id[parent.id.length-1]) { edgeWeight = parseInt(Math.sqrt(edgeWeight));}
 				if (edgeWeight <= 32) 
 				{
 					edgeclass="low-weight";
 				}
 				g.setEdge(parent.id, tempid, {curve: d3.curveBasis, label: samLabel, weight: edgeWeight, class: edgeclass, minlen: edgeminlen});
+
 			}
 			if (node.precursors.length == 0 && node.children.length == 0) {
+				g.setNode('singlesGroup', {class: "bg-primary"});
 				g.setParent(node.id, 'singlesGroup');
 			}
 		}
@@ -337,10 +418,10 @@
 	function post(params, path="", method="post") {
 		// Currently not in use, but you would need to submit to the server from this page
 		// to update the main page display
-	    var form = document.getElementById('courseDataForm');
-	    for(var key in params) {
+	    let form = document.getElementById('courseDataForm');
+	    for(let key in params) {
 	        if(params.hasOwnProperty(key)) {
-	            var hiddenField = document.createElement("input");
+	            let hiddenField = document.createElement("input");
 	            hiddenField.setAttribute("type", "hidden");
 	            hiddenField.setAttribute("name", key);
 	            hiddenField.setAttribute("value", params[key]);
@@ -383,7 +464,7 @@
 
 		// Center the graph
 		var initialScale = 0.5;
-		svg.attr('height', g.graph().height * initialScale + 40);
+		//svg.attr('height', g.graph().height * initialScale + 40);
 		
 		let transform = d3.zoomTransform(svg.node()).translate((svg.attr("width") - g.graph().width * initialScale) / 2, 0)
 													.scale(initialScale);
@@ -400,8 +481,12 @@
 					jsonData[k].node = j[i];
 				}
 			}
+			d3.select(j[i]).select("rect")
+                	.style('stroke', '#bfbfbf');
 		});
+
 	}
+
 
 	//window.addEventListener("load", main, true);
 	//window.addEventListener("resize", render, true);

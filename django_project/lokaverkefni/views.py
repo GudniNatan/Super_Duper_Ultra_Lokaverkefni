@@ -2,12 +2,12 @@
 #coding: utf-8
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.http import Http404
 from .forms import LoginForm, RegisterForm, CourseSubmitForm
 from datetime import date
 from passwordValidation import boil, verify, updatePass
 from .models import Courses, Tracks, Students, Semesters, Trackcourses, Studentcourses
-from django.db import connections
-from django.db import IntegrityError
+from django.db import connections, IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import smart_unicode
 from django.contrib.auth import logout
@@ -39,9 +39,9 @@ def index(request):
                     loginformErrors.append(smart_unicode(u"Kennitala/Lykilorð rangt slegið inn"))
 
             else:
-                #loginformErrors = loginform.errors.as_data()
-                for err in loginform.errors.as_data()["__all__"]:
-                    loginformErrors.append(err[0])
+                for key in loginform.errors.as_data():
+                    for err in loginform.errors.as_data()[key]:
+                        loginformErrors.append(err[0])
 
         if "sendregister" in request.POST:
             registerform = RegisterForm(request.POST)
@@ -53,7 +53,6 @@ def index(request):
                     registerformErrors.append(smart_unicode(u"Kennitala upptekin"))
 
             else:
-                #registerformErrors = registerform.errors.as_data()
                 for key in registerform.errors.as_data():
                     for err in registerform.errors.as_data()[key]:
                         registerformErrors.append(err[0])
@@ -79,7 +78,7 @@ def chart(request):
     path = 'lokaverkefni/chart.html'
     userName = request.session.get("kt")
 
-    if request.method == 'POST' and "courses[]" in request.POST:
+    if userName and request.method == 'POST' and "courses[]" in request.POST:
         addStudentCourses(request, userName)
 
     with connections['mysql'].cursor() as cursor:
@@ -111,13 +110,28 @@ def about(request):
 def nextSemester(request):
     path = 'lokaverkefni/nextSemester.html'
     userName = request.session.get("kt")
+    courseData, nextsem, nextsem_id = None, None, None
 
-    if request.method == 'POST' and "courses[]" in request.POST:
+    if userName and request.method == 'POST' and "courses[]" in request.POST:
         addStudentCourses(request, userName)
 
-    courseData = AvailableCourses.get(userName)
-    nextsem = Semesters.objects.get(semesterid=getFinalRegisteredSemesterIndex(userName))
-    nextsem_id = nextsem.semestername
+    if userName:
+        courseData = AvailableCourses.get(userName)
+        nextsem = Semesters.objects.get(semesterid=getFinalRegisteredSemesterIndex(userName))
+        nextsem_id = nextsem.semestername
+    else:
+        pass
+        #get available courses for all tracks
+        courseData = AvailableCourses.getAllNoRestrictors()
+        #nextsem should be literally the next semester in real time
+        for sem in Semesters.objects.all():
+            if sem.semesterstarts > date.today():
+                nextsem = sem
+                nextsem_id = nextsem.semestername
+                break
+        else:
+            nextsem = Semesters.objects.get(semesterid=1)
+            nextsem_id = nextsem.semestername
 
     context = {
         "year": date.today().year,
@@ -127,6 +141,24 @@ def nextSemester(request):
         "nextsem": nextsem_id,
     }
     return render(request, path, context)
+
+def delete_view(request, semesterName):
+    delsem = get_object_or_404(Semesters, semestername=semesterName)
+    userName = request.session.get("kt")
+    if not userName:
+        raise Http404(u"Innskráning er nauðsynleg til að eyða.")
+
+    student = Students.objects.get(username=userName)
+    scs = Studentcourses.objects.filter(studentid=student)
+
+    for sem in Semesters.objects.all():
+        if sem.semesterstarts < delsem.semesterstarts:
+            scs = scs.exclude(semestertaken=sem)
+
+    scs.delete()
+
+    return redirect('../../')
+
 
 def logout_view(request):
     logout(request)

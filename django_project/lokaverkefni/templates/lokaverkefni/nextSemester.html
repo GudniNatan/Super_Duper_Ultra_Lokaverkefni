@@ -5,16 +5,19 @@
 
 {% block content %}
 <main class="container-fluid">
+    {% if userName %}
     <div class="d-flex justify-content-center ">
-        <h2 class="col-auto p-4 border rounded bg-light text-dark mt-2 mb-2">Veldu áfanga fyrir {{ nextsem }}</h2>
+        <h2 class="col-auto p-4 border rounded bg-light text-dark mt-2 mb-2 mw-100">Veldu áfanga fyrir {{ nextsem }}</h2>
     </div>
     <div class="d-flex flex-wrap flex-row">
         {% for course in courseData%}
         <div data-toggle="buttons" class="col-md-3 col-sm-6 pl-sm-1 pr-sm-1">
-            <label class="btn btn-outline-primary border border-dark col-12 p-2 courseCheckbox" title="{{course.coursename}}" id="{{course.coursenumber}}" data-einingar="{{course.coursecredits}}">
+            <label class="btn btn-outline-primary border border-dark col-12 p-2 courseCheckbox" title="{{course.coursename}} - {{course.coursecredits}} einingar" id="{{course.coursenumber}}" data-einingar="{{course.coursecredits}}">
                 <input type="checkbox" autocomplete="off"> {{course.coursenumber}}
             </label>
         </div>
+        {% empty %}
+        <p class="ml-auto mr-auto"><i class="text-muted">Engir fleiri áfangar til að velja</i></p>
         {% endfor %}
     </div>
     <div class="row justify-content-between align-items-center m-0">
@@ -22,13 +25,50 @@
             <button id="submitCourses" class="btn btn-primary">Velja</button>
         </div>
         <div class="border rounded p-1 pl-sm-3 pr-sm-3">
-            <p>Valið: 0 einingar</p>
+            <p>Valið: <span id="einingarfjoldi">0</span> einingar</p>
             <p>Mest 35 einingar.</p>
         </div>
     </div>
     <form method="post" action="" id="courseDataForm">{% csrf_token %}</form>
+    {% else %}
+    <div class="d-flex justify-content-center flex-wrap">
+        <h2 class="col-auto p-4 border rounded bg-light text-dark mt-2 mb-2 mw-100">Skoðaðu áfanga fyrir {{ nextsem }}</h2>
+    </div>
+    <div class="d-flex justify-content-center ">
+        <p><i class="text-muted">Hér eru skráðir allir þeir áfangar sem þú gætir tekið á fyrstu önn á öllum brautum</i></p>
+    </div>
+    <div id="accordion" role="tablist">
+    {% for t, courses in courseData.items reversed %}
+          <div class="card">
+              <div class="card-header" role="tab" id="heading{{t.tracknumber}}">
+                  <h5 class="mb-0">
+                      <a data-toggle="collapse" href="#{{t.tracknumber}}" aria-controls="{{t.tracknumber}}">
+                          {{t.trackname}}
+                      </a>
+                  </h5>
+              </div>
+              <div id="{{t.tracknumber}}" class="collapse show" role="tabpanel" aria-labelledby="heading{{t.tracknumber}}" data-parent="#accordion">
+                  <div class="card-body d-flex flex-wrap flex-row">
+                        {% for course in courses%}
+                        <div data-toggle="buttons" class="col-md-3 col-sm-6 pl-sm-1 pr-sm-1">
+                            <label class="btn btn-outline-primary border border-dark col-12 p-2 courseCheckbox" title="{{course.coursename}}" id="{{course.coursenumber_id}}" data-einingar="{{course.coursecredits}}">
+                                <input type="checkbox" autocomplete="off"> {{course.coursenumber_id}}
+                            </label>
+                        </div>
+                        {% empty %}
+                        <p><i class="text-muted">Engir áfangar skráðir á þessa braut</i></p>
+                        {% endfor %}
+                  </div>
+              </div>
+          </div>
+    {% endfor %}
+    </div>
+
+    {% endif %}
 </main>
 {% endblock %}
 {% block bodyFoot %}
+    {% if userName %}
     <script src="{% static 'lokaverkefni/flytival.js' %}"></script>
+    {% endif %}
 {% endblock %}

@@ -26,7 +26,7 @@
                         <tr>
                             <th scope="col">{{semester.0}}</th>
                             <th>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Delete semester">
+                                <button type="button" class="close" data-toggle="modal" data-target="#modal{{semester.0}}" aria-label="Delete semester">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </th>
@@ -41,13 +41,39 @@
                     </tbody>
                 </table>
             </div>
+            <div class="modal fade bd-example-modal-lg" tabindex="-1" id="modal{{semester.0}}" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myLargeModalLabel">Ertu alveg viss?</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                Ef þú eyðir áföngunum úr þessari önn fara líka allir áfangar úr öllum önnum á <u>eftir</u> þessari.
+                                Það verður ekki aftur snúið.
+                            </p>
+                            <a type="button" class="btn btn-danger" href="/delete/{{semester.0}}/">Eyða {{semester.0}}</a>
+                            <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close">Hætta við</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-sm-6 col-lg-8 p-sm-2 align-items-center d-flex justify-content-center correct-col">
+                <div class="p-4 border rounded bg-light text-dark mt-2 mb-2">
+                    <h2 class="font-weight-bold">Skráðu áfanga <a href="/nextSemester/">í flýtivali</a> og sjáðu þá hér.</h2>
+                </div>
+            </div>
             {% endfor %}
         </div>
     </main>
 
 {% else %}
     <main class="container-fluid p-0 pl-sm-3 pr-sm-3">
-        <div class="row">
+        <div class="d-flex flex-wrap">
         <form method="post" action="#loginForm" id="loginForm" class="col-md border border-secondary rounded m-2 mb-0">
             {% csrf_token %}
             <legend>Innskrá</legend>

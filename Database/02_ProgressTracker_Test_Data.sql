@@ -56,7 +56,7 @@ insert into Courses(courseNumber,courseName, divisionID)
 values('ENSK2AE05AT','Enska',10),
 	  ('ENSK2OF05BT','Enska',10),
       ('ENSK3AM05CT','Enska',10),
-      ('ÍSLE2AA05AT','Íslanska',10),
+      ('ÍSLE2AA05AT','Íslenska',10),
       ('ÍSLE2GO05BT','Íslenska',10),
       ('ÍSLE3BF05CT','Íslenska',10),
       ('ÍSLE3NB05CT','Íslenska',10),

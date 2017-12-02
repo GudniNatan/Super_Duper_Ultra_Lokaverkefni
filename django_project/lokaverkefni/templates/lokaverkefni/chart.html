@@ -5,11 +5,11 @@
 
 {% block content %}
 	<main id="graph" class="container-fluid">
-        <div>
+        <div class="svgContainer pb-1">
             <svg width=500 class="border border-secondary rounded"></svg>
         </div>
-        <div>
-            <button id="submitCourses" class="btn btn-primary">Submit</button>
+        <div class="d-flex justify-content-center align-items-center">
+            <button id="submitCourses" class="btn btn-primary">Uppfæra kort</button>
         </div>
 	</main>
     <form method="post" action="" id="courseDataForm">{% csrf_token %}</form>

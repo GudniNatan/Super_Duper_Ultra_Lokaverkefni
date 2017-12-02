@@ -19,20 +19,17 @@
 		form.submit();
 	});
 
-	document.addEventListener("click", function(event){
+	document.body.addEventListener("click", function(event){
 		//Reikna einingarfjolda
 		let fjoldi = 0;
 		for (var i = buttons.length - 1; i >= 0; i--) {
 			if (buttons[i].classList.contains("active")){
-				fjoldi += parseInt(buttons[i].dataset.einingar);
+				fjoldi++;
 			}
 		}
 		einingarfjoldi.textContent = fjoldi;
 		if (fjoldi > 35) {
-			submit.setAttribute("disabled", true);
-		}
-		else{
-			submit.removeAttribute("disabled");
+			submit.setAttribute("disabled");
 		}
 	});
 })();
