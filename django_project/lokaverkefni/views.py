@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404, redirec
 from .forms import LoginForm, RegisterForm, CourseSubmitForm
 from datetime import date
 from passwordValidation import boil, verify, updatePass
-from .models import Courses, Tracks, Students, Semesters
+from .models import Courses, Tracks, Students, Semesters, Trackcourses, Studentcourses
 from django.db import connections
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
@@ -78,6 +78,10 @@ def index(request):
 def chart(request):
     path = 'lokaverkefni/chart.html'
     userName = request.session.get("kt")
+
+    if request.method == 'POST' and "courses[]" in request.POST:
+        addStudentCourses(request, userName)
+
     with connections['mysql'].cursor() as cursor:
         if userName:
             cursor.execute("SELECT courseJSONByStudent('%s')" % userName)
@@ -107,20 +111,13 @@ def about(request):
 def nextSemester(request):
     path = 'lokaverkefni/nextSemester.html'
     userName = request.session.get("kt")
+
+    if request.method == 'POST' and "courses[]" in request.POST:
+        addStudentCourses(request, userName)
+
     courseData = AvailableCourses.get(userName)
     nextsem = Semesters.objects.get(semesterid=getFinalRegisteredSemesterIndex(userName))
     nextsem_id = nextsem.semestername
-
-    if request.method == 'POST':
-        # Make sure all the selected courses are legal
-        cdID = list()
-        for c in courseData:
-            cdID.append((c.coursenumber, c.coursenumber))
-        courses = CourseSubmitForm(request.POST)
-        raise Exception(courses)
-
-        # Add them to the database on the next semester.
-        pass
 
     context = {
         "year": date.today().year,
@@ -168,3 +165,40 @@ def login(request, kennitala, password):
         cursor.execute("CALL updatePass('%s', '%s')" % (kennitala, newPass))
 
     return True
+
+def addStudentCourses(request, userName):
+    einingar = 0
+    maxEiningar = 35
+
+    courseData = AvailableCourses.get(userName)
+    nextsem = Semesters.objects.get(semesterid=getFinalRegisteredSemesterIndex(userName))
+
+    # Get selected courses
+    cdID = list()
+    for c in courseData:
+        cdID.append((c.coursenumber, c.coursenumber))
+    courseIDS = request.POST.getlist('courses[]', False)
+
+    # Make sure all the selected courses are legal
+    selectedCourses = list()
+    legal = True
+    for cID in courseIDS:
+        c = [item for item in courseData if item.coursenumber == cID]
+        if not c:
+            legal = False
+            break
+        einingar += c[0].coursecredits
+        selectedCourses.append(c[0])
+    if legal and einingar <= maxEiningar:
+        # Add them to the database on the next semester.
+
+        # need to get student & track
+        student = Students.objects.get(username=userName)
+        track = Tracks.objects.get(trackid=student.studenttrack_id)
+
+        scs = list()
+        for course in selectedCourses:
+            trackCourse = Trackcourses.objects.get(coursenumber=course.coursenumber, trackid=track.trackid)
+            scs.append(Studentcourses(trackcourseid=trackCourse, studentid=student, semestertaken=nextsem))
+            pass
+        Studentcourses.objects.bulk_create(scs)

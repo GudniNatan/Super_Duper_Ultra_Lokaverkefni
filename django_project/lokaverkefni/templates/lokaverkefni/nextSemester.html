@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-center ">
         <h2 class="col-auto p-4 border rounded bg-light text-dark mt-2 mb-2">Veldu áfanga fyrir {{ nextsem }}</h2>
     </div>
-    <div class="d-flex flex-wrap flex-row justify-content-between">
+    <div class="d-flex flex-wrap flex-row">
         {% for course in courseData%}
         <div data-toggle="buttons" class="col-md-3 col-sm-6 pl-sm-1 pr-sm-1">
             <label class="btn btn-outline-primary border border-dark col-12 p-2 courseCheckbox" title="{{course.coursename}}" id="{{course.coursenumber}}" data-einingar="{{course.coursecredits}}">
