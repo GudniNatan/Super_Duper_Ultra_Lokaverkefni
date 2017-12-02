@@ -20,7 +20,7 @@ def getSemesters(userName):
         finalData.append((semester.semestername, getSelectedCoursesBySemester(student, semester)))
     return finalData
 
-def getTrimmedSemesters(userName, getFinalIndex=False):
+def getTrimmedSemesters(userName, getIndex=None):
     data = getSemesters(userName)
     startIndex = -1
     finalIndex = 0
@@ -31,9 +31,11 @@ def getTrimmedSemesters(userName, getFinalIndex=False):
             finalIndex = data.index(semester)
     if finalIndex < len(data) - 1:
         finalIndex += 1
-    if getFinalIndex:
+    if getIndex == "last":
         return finalIndex
+    elif getIndex == "first":
+        return startIndex
     return data[startIndex:finalIndex+1]
 
 def getFinalRegisteredSemesterIndex(userName):
-    return getTrimmedSemesters(userName, True)
+    return getTrimmedSemesters(userName, "last") + 1

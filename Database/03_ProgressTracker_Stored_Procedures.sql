@@ -62,7 +62,7 @@ create function getPass
     user_name char(10)
 ) returns varchar(255)
 begin
-	return (SELECT userPass from Students where userName = user_name);
+	return (SELECT userPassword from Students where userName = user_name);
 end $$
 delimiter ;
 
@@ -80,3 +80,22 @@ begin
 	where userName = user_name;
 end $$
 delimiter ;
+delimiter $$
+drop procedure if exists RemoveStudent $$
+
+create procedure RemoveStudent
+(
+    user_name char(10)
+)
+begin
+	DECLARE id int;
+    
+    SELECT studentID into id FROM Students WHERE userName = user_name;
+    
+	delete from StudentCourses WHERE studentID = id;
+    delete from Students WHERE studentID = id;
+end $$
+delimiter ;
+
+-- call RemoveStudent('1803982879');
+select * from Students;

@@ -2,16 +2,16 @@
 #coding: utf-8
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, CourseSubmitForm
 from datetime import date
 from passwordValidation import boil, verify, updatePass
-from .models import Courses, Tracks, Students
+from .models import Courses, Tracks, Students, Semesters
 from django.db import connections
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import smart_unicode
 from django.contrib.auth import logout
-from getSemesterData import getSemesters, getTrimmedSemesters
+from getSemesterData import getSemesters, getTrimmedSemesters, getFinalRegisteredSemesterIndex
 import AvailableCourses
 
 # Create your views here.
@@ -108,11 +108,26 @@ def nextSemester(request):
     path = 'lokaverkefni/nextSemester.html'
     userName = request.session.get("kt")
     courseData = AvailableCourses.get(userName)
+    nextsem = Semesters.objects.get(semesterid=getFinalRegisteredSemesterIndex(userName))
+    nextsem_id = nextsem.semestername
+
+    if request.method == 'POST':
+        # Make sure all the selected courses are legal
+        cdID = list()
+        for c in courseData:
+            cdID.append((c.coursenumber, c.coursenumber))
+        courses = CourseSubmitForm(request.POST)
+        raise Exception(courses)
+
+        # Add them to the database on the next semester.
+        pass
+
     context = {
         "year": date.today().year,
         'current_path': request.get_full_path(),
         "userName": userName,
         "courseData": courseData,
+        "nextsem": nextsem_id,
     }
     return render(request, path, context)
 

@@ -4,7 +4,7 @@
 
 {% block content %}
 {% if userName %}
-    <main class="container-fluid">
+    <main class="container-fluid p-0 pl-md-3 pr-md-3">
         {% if post %}
         <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -14,16 +14,23 @@
         </div>
         {% endif %}
         <div class="row">
-            <div class="col-sm-6 col-lg-4 p-sm-2 align-items-center d-flex justify-content-center">
+            <div class="col-sm-6 col-lg-4 p-sm-2 align-items-center d-flex justify-content-center correct-col">
                 <div class="p-4 border rounded bg-light text-dark mt-2 mb-2">
                     <h2 class="font-weight-bold">Þín námsáætlun</h2>
                 </div>
             </div>
             {% for semester in semesterData %}
-            <div class="border border-light rounded col-sm-6 col-lg-4 p-sm-2">
+            <div class="border border-light rounded col-sm-6 col-lg-4 p-sm-2 correct-col">
                 <table class="table">
                     <thead class="thead-light rounded">
-                        <tr><th scope="col">{{semester.0}}</th></tr>
+                        <tr>
+                            <th scope="col">{{semester.0}}</th>
+                            <th>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Delete semester">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for c in semester.1 %}
@@ -39,7 +46,7 @@
     </main>
 
 {% else %}
-    <main class="container-fluid">
+    <main class="container-fluid p-0 pl-sm-3 pr-sm-3">
         <div class="row">
         <form method="post" action="#loginForm" id="loginForm" class="col-md border border-secondary rounded m-2 mb-0">
             {% csrf_token %}

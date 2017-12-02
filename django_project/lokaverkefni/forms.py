@@ -27,7 +27,7 @@ class RegisterForm(forms.Form):
     register_username = KennitalaField()
     register_password = forms.CharField(validators=[validatorPass])
     register_password_repeat = forms.CharField(validators=[validatorPass])
-    track_id = forms.DecimalField()
+    track_id = forms.DecimalField(required=True)
 
     def __init__(self, value):
         super(RegisterForm, self).__init__(value)
@@ -47,3 +47,19 @@ class RegisterForm(forms.Form):
                 )
 
         return cleaned_data
+
+class ArrayField(forms.Field):
+
+    def __init__(self, *args, **kwargs):
+        self.base_type = kwargs.pop('base_type')
+        self.widget = forms.MultipleHiddenInput
+        super(ArrayField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        for subvalue in value:
+            self.base_type.validate(subvalue)
+
+        return [self.base_type.clean(subvalue) for subvalue in value]
+
+class CourseSubmitForm(forms.Form):
+    courses = ArrayField(base_type=forms.CharField())

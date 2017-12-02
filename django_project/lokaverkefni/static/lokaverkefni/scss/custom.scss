@@ -18,7 +18,11 @@ body, html {
 }
 html{height:100%;}
 body{min-height:100%;}
-
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
 header {
   text-align: center;
   display: block;
@@ -46,7 +50,7 @@ div#links a {
 }
 
 .clusters rect {
-  fill: $info;
+  fill: $primary;
   stroke: $gray-800;
   stroke-width: 1.5px;
 }
@@ -64,6 +68,7 @@ div#links a {
 svg {
   width: 100%;
   min-height: inherit;
+  max-height: 100%;
 }
 
 .course {
@@ -126,4 +131,19 @@ footer {
     stroke: $secondary;
     opacity: 0.5;
   }
+}
+.node:hover rect{
+  border: 20px solid red;
+}
+
+.highlight-node rect{
+  border: 4px solid $warning;
+  fill: orange;
+}
+.correct-col{
+  padding: 0;
+  left: 15px;
+}
+.row{
+  max-width: 100%;
 }

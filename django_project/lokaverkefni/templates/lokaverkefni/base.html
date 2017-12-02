@@ -17,7 +17,7 @@
 <body class="d-flex flex-column">
     <header class="p-3 mb-2 bg-primary text-white">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark nav-justified rounded">
-            <a class="navbar-brand" href="#"><h3>Önnum kafa</h3></a>
+            <a class="navbar-brand" href="/"><h3>Önnum kafa</h3></a>
             <button class="navbar-toggler mb-1" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -32,15 +32,6 @@
                         <a class="nav-link" href="/">Heim</a>
                     </li>
                     {% endif %}
-                    {% if request.path == "/chart/" %}
-                    <li class="nav-item active btn btn-secondary" title="Áfangakort">
-                        <a class="nav-link" href="/chart/">Áfangakort<span class="sr-only">(current)</span></a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item btn btn-secondary" title="Áfangakort">
-                        <a class="nav-link" href="/chart/">Áfangakort</a>
-                    </li>
-                    {% endif %}
                     {% if request.path == "/nextSemester/" %}
                     <li class="nav-item active btn btn-secondary" title="Listaval">
                         <a class="nav-link" href="/nextSemester/">Flýtival<span class="sr-only">(current)</span></a>
@@ -48,6 +39,15 @@
                     {% else %}
                     <li class="nav-item btn btn-secondary" title="Listaval">
                         <a class="nav-link" href="/nextSemester/">Flýtival</a>
+                    </li>
+                    {% endif %}
+                    {% if request.path == "/chart/" %}
+                    <li class="nav-item active btn btn-secondary" title="Áfangakort">
+                        <a class="nav-link" href="/chart/">Áfangakort<span class="sr-only">(current)</span></a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item btn btn-secondary" title="Áfangakort">
+                        <a class="nav-link" href="/chart/">Áfangakort</a>
                     </li>
                     {% endif %}
                     {% if request.path == "/about/" %}
@@ -68,7 +68,7 @@
             </div>
         </nav>
     </header>
-    <div class="pl-3 pr-3" style="flex:1;">
+    <div class="p-0 pl-sm-3 pr-sm-3 d-flex" style="flex:1;">
         {% block content %}
         {% endblock %}
     </div>

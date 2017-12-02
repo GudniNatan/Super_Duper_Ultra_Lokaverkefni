@@ -1,9 +1,34 @@
 {% extends "lokaverkefni/base.html" %}
+{% load staticfiles%}
 
 {% block title %}About{% endblock %}
 
 {% block content %}
 <main class="container-fluid">
-    <p>{{courseData}}</p>
+    <div class="d-flex justify-content-center ">
+        <h2 class="col-auto p-4 border rounded bg-light text-dark mt-2 mb-2">Veldu áfanga fyrir {{ nextsem }}</h2>
+    </div>
+    <div class="d-flex flex-wrap flex-row justify-content-between">
+        {% for course in courseData%}
+        <div data-toggle="buttons" class="col-md-3 col-sm-6 pl-sm-1 pr-sm-1">
+            <label class="btn btn-outline-primary border border-dark col-12 p-2 courseCheckbox" title="{{course.coursename}}" id="{{course.coursenumber}}" data-einingar="{{course.coursecredits}}">
+                <input type="checkbox" autocomplete="off"> {{course.coursenumber}}
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-between align-items-center m-0">
+        <div>
+            <button id="submitCourses" class="btn btn-primary">Velja</button>
+        </div>
+        <div class="border rounded p-1 pl-sm-3 pr-sm-3">
+            <p>Valið: 0 einingar</p>
+            <p>Mest 35 einingar.</p>
+        </div>
+    </div>
+    <form method="post" action="" id="courseDataForm">{% csrf_token %}</form>
 </main>
+{% endblock %}
+{% block bodyFoot %}
+    <script src="{% static 'lokaverkefni/flytival.js' %}"></script>
 {% endblock %}
