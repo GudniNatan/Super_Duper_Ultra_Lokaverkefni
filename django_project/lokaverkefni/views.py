@@ -16,8 +16,8 @@ import AvailableCourses
 
 # Create your views here.
 def index(request):
+    # Index page
     path = 'lokaverkefni/index.html'
-    #path = os.path.join(os.path.dirname(__file__), '/templates/' + 'lokaverkefni/index.html')
     loginformErrors, registerformErrors = list(), list()
     post = False
     tracks = list()
@@ -56,12 +56,13 @@ def index(request):
                 for key in registerform.errors.as_data():
                     for err in registerform.errors.as_data()[key]:
                         registerformErrors.append(err[0])
-
+    # Get username from session
     userName = request.session.get("kt")
     semesterData = None
     if userName:
         semesterData = getTrimmedSemesters(userName)
 
+    # This is the data passed on to the template
     context = {
         "year":date.today().year,
         "userName": userName,
@@ -72,15 +73,21 @@ def index(request):
         'tracks': tracks,
         'semesterData':semesterData,
     }
+
+    #Render the page
     return render(request, path, context)
 
 def chart(request):
+    # The /chart/ page
     path = 'lokaverkefni/chart.html'
+
+    # Get username from session
     userName = request.session.get("kt")
 
     if userName and request.method == 'POST' and "courses[]" in request.POST:
         addStudentCourses(request, userName)
 
+    #This code gets the JSON data from the database using raw sql
     with connections['mysql'].cursor() as cursor:
         if userName:
             cursor.execute("SELECT courseJSONByStudent('%s')" % userName)
@@ -97,6 +104,7 @@ def chart(request):
     return render(request, path, context)
 
 def about(request):
+    # The /about/ page
     path = 'lokaverkefni/about.html'
     userName = request.session.get("kt")
     context = {
@@ -108,10 +116,12 @@ def about(request):
 
 
 def nextSemester(request):
+    # The /nextSemester/ page
     path = 'lokaverkefni/nextSemester.html'
     userName = request.session.get("kt")
     courseData, nextsem, nextsem_id = None, None, None
 
+    # If courses have been submitted, validate them and add them to StudentCourses
     if userName and request.method == 'POST' and "courses[]" in request.POST:
         addStudentCourses(request, userName)
 
@@ -121,9 +131,9 @@ def nextSemester(request):
         nextsem_id = nextsem.semestername
     else:
         pass
-        #get available courses for all tracks
+        # get available courses for all tracks
         courseData = AvailableCourses.getAllNoRestrictors()
-        #nextsem should be literally the next semester in real time
+        # nextsem should be literally the next semester in real time
         for sem in Semesters.objects.all():
             if sem.semesterstarts > date.today():
                 nextsem = sem
@@ -143,6 +153,7 @@ def nextSemester(request):
     return render(request, path, context)
 
 def delete_view(request, semesterName):
+    # Simple page to delete courses from StudentCourses, redeirects back to index
     delsem = get_object_or_404(Semesters, semestername=semesterName)
     userName = request.session.get("kt")
     if not userName:
@@ -161,6 +172,7 @@ def delete_view(request, semesterName):
 
 
 def logout_view(request):
+    # Logout page uses included Django logout function and redirects to index page
     logout(request)
     return redirect('/')
 
@@ -199,6 +211,7 @@ def login(request, kennitala, password):
     return True
 
 def addStudentCourses(request, userName):
+    # Validate submitted courses and add them to the StudentCourses table
     einingar = 0
     maxEiningar = 35
 
@@ -222,12 +235,12 @@ def addStudentCourses(request, userName):
         einingar += c[0].coursecredits
         selectedCourses.append(c[0])
     if legal and einingar <= maxEiningar:
-        # Add them to the database on the next semester.
 
         # need to get student & track
         student = Students.objects.get(username=userName)
         track = Tracks.objects.get(trackid=student.studenttrack_id)
 
+        # Add them to the database on the next semester.
         scs = list()
         for course in selectedCourses:
             trackCourse = Trackcourses.objects.get(coursenumber=course.coursenumber, trackid=track.trackid)
